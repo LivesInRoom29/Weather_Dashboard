@@ -1,0 +1,21 @@
+header {
+    background-color: rgb(89, 101, 114);
+    width: 100%;
+    text-align: center;
+
+}
+
+aside {
+    background-color: lightgrey;
+}
+
+div.current {
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+div.forcast {
+    padding: 10px;
+    background-color: rgb(243, 241, 241);
+}
