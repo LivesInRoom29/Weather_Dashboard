@@ -4,6 +4,104 @@ $(document).ready(function() {
     const searchBtn = $('button.search');
     const cityDateEl = $('h2.city-date');
     const weatherIconEl = $('img#weather-icon');
+    const hour = moment().format('HH.mm');
+
+    // Array containing weather details and corresponding icons from OpenWeather API
+    const weatherIconArray = [
+        {weather:'Clear', imgD:'01d.png', imgN:'01n.png'},
+        {weather:'Clouds', details:[
+            {description:'few clouds', imgD:'02d.png', imgN:'02n.png'},
+            {description:'scattered clouds', imgD:'03d.png', imgN:'03n.png'},
+            {description:'broken clouds', imgD:'04d.png', imgN:'04n.png'},
+            {description:'overcast clouds', imgD:'04d.png', imgN:'04n.png'}
+            ]
+        },
+        {weather:'Drizzle', imgD:'09d.png', imgN:'09n.png'},
+        {weather:'Rain', details:[
+            {
+                descriptions:['light intensity shower rain', 'shower rain', 'heavy intensity shower rain', 'ragged shower rain'],
+                imgD:'09d.png',
+                imgN:'09n.png'
+            },
+            {description:'freezing rain', imgD:'13d.png', imgN:'13n.png'},
+            {
+                descriptions:['light rain', 'moderate rain', 'heavy intensity rain', 'extreme rain'],
+                imgD:'10d.png',
+                imgN:'10n.png'
+            }
+            ]
+        },
+        {weather:'Thunderstorm', imgD:'11d.png', imgN:'11n.png'},
+        {weather:'Snow', imgD:'13d.png', imgN:'13n.png'},
+        {weather:['Mist', 'Smoke', 'Haze', 'Dust', 'Fog', 'Sand', 'Ash', 'Squall', 'Tornado'], imgD:'50d.png', imgN:'50n.png'},
+    ];
+
+    function getWeatherIcon(weatherObj) {
+        const iconURL = 'http://openweathermap.org/img/wn/';
+        let fullIconURL = '';
+        const sunrise = moment.unix(weatherObj.sys.sunrise).format('HH.mm');
+        const sunset = moment.unix(weatherObj.sys.sunset).format('HH.mm');
+        // Current weather conditions
+        const weatherCond = weatherObj.weather[0].main;
+
+        const index = weatherIconArray.findIndex(x => x.weather === weatherCond);
+        console.log (`index is ${index}`);
+        console.log(Object.keys(weatherIconArray[index]).length);
+
+        // If the object has weather, imgD and imgN
+        if (Object.keys(weatherIconArray[index]).length === 3) {
+            // If it's between surise and sunset, use the daytime icon (imgD), otherwise use the nighttime icond (imgN)
+            if (hour > sunrise && hour < sunset) {
+                fullIconURL = iconURL + weatherIconArray[index].imgD;
+            } else {
+                fullIconURL = iconURL + weatherIconArray[index].imgN;
+            }
+        } else {
+            const detailsArray = weatherIconArray[index].details;
+            const weatherDescr= weatherObj.weather[0].description;
+            const imgIcon = findImgFromDetails(detailsArray, weatherDescr, weatherObj);
+            fullIconURL = iconURL + imgIcon;
+        }
+        console.log(fullIconURL);
+        return fullIconURL;
+    };
+
+    // Where details is an array of objects, description is the weather description we are looking for.
+    function findImgFromDetails(details, weatherDescription, weatherObj) {
+        let img = ''
+        const sunrise = moment.unix(weatherObj.sys.sunrise).format('HH.mm');
+        const sunset = moment.unix(weatherObj.sys.sunset).format('HH.mm');
+        console.log(details);
+        details.forEach(function(object) {
+            console.log(object)
+            // If the key 'description' is in the object, there is only one description - just get the img name
+            if ('description' in object) {
+                if (object.description === weatherDescription) {
+                    // If it's between surise and sunset, use the daytime icon (imgD), otherwise use the nighttime icond (imgN)
+                    if (hour > sunrise && hour < sunset) {
+                        img = object.imgD;
+                    } else {
+                        img = object.imgN;
+                    }
+                }
+            // Otherwise, there are multiple descriptions
+            } else {
+                const descriptionsArray = object.descriptions;
+                descriptionsArray.forEach(function(description) {
+                    if (description === weatherDescription) {
+                        // If it's between surise and sunset, use the daytime icon (imgD), otherwise use the nighttime icond (imgN)
+                        if (hour > sunrise && hour < sunset) {
+                            img = object.imgD;
+                        } else {
+                            img = object.imgN;
+                        }
+                    }
+                });
+            }
+        });
+        console.log(img)
+        return img;
+    }
 
     // Display the current weather, including weather icon, in the city-date heading
     // Display
@@ -17,124 +115,16 @@ $(document).ready(function() {
         weatherIconEl.attr('src', iconURL).attr('alt', weatherCondition);
     }
 
-    // This function uses the current weather condition to select for the icons from https://openweathermap.org/weather-conditions
-    function getWeatherIcon(weatherObj) {
-        const iconURL = 'http://openweathermap.org/img/wn/';
-        let fullIconURL = '';
-        const hour = moment().format('HH.mm');
-        const sunrise = moment.unix(weatherObj.sys.sunrise).format('HH.mm');
-        console.log(sunrise);
-        const sunset = moment.unix(weatherObj.sys.sunset).format('HH.mm');
-        // Current weather conditions
-        const weatherCond = weatherObj.weather[0].main;
-        console.log(`The weather is ${weatherCond}`);
-
-        switch(weatherCond) {
-            case 'Clear':
-                console.log("it's clear!!!")
-                if (hour > sunrise && hour < sunset) {
-                    fullIconURL = `${iconURL}01d.png`;
-                } else {
-                    fullIconURL = `${iconURL}01n.png`;
-                }
-                break;
-            case 'Clouds':
-                switch(weatherObj.weather[0].description) {
-                    case 'few clouds':
-                        // If it's daylight, use day time icons (end with d), otherwise, use night icons (end in n)
-                        if (hour > sunrise && hour < sunset) {
-                            fullIconURL = `${iconURL}02d.png`;
-                        } else {
-                            fullIconURL = `${iconURL}02n.png`;
-                        }
-                        break;
-                    case 'scattered clouds':
-                        // Day and Night icons are the same
-                        fullIconURL = `${iconURL}03d.png`;
-                        break;
-                    case 'broken clouds':
-                    case 'overcast clouds':
-                        // Day and Night icons are the same
-                        fullIconURL = `${iconURL}04d.png`;
-                        break;
-                }
-            case 'Drizzle':
-                // Day and Night icons are the same
-                fullIcon = `${iconURL}09d.png`;
-                break;
-            case 'Rain':
-                console.log(`Type of rain: ${weatherObj.weather[0].description}`)
-                switch(weatherObj.weather[0].description) {
-                    case 'light intensity shower rain':
-                    case 'shower rain':
-                    case 'heavy intensity shower rain':
-                    case 'ragged shower rain':
-                        // Day and Night icons are the same
-                        fullIcon = `${iconURL}09d.png`;
-                        break;
-                    case 'freezing rain':
-                        // Day and Night icons are the same
-                        fullIconURL = `${iconURL}13d.png`;
-                        break;
-                    case 'light rain':
-                    case 'moderate rain':
-                    case 'heavy intensity rain':
-                    case 'extreme rain':
-                        // All other forms of rain (light rain, moderate rain, etc)
-                        if (hour > sunrise && hour < sunset) {
-                            fullIconURL = `${iconURL}10d.png`;
-                        } else {
-                            fullIconURL = `${iconURL}10n.png`;
-                        }
-                        break;
-                }
-            case 'Thunderstorm':
-                // Day and Night icons are the same
-                fullIconURL = `${iconURL}11d.png`;
-                break;
-            case 'Snow':
-                // Day and Night icons are the same
-                fullIconURL = `${iconURL}13d.png`;
-                break;
-            case 'Mist':
-            case 'Smoke':
-            case 'Haze':
-            case 'Dust':
-            case 'Fog':
-            case 'Sand':
-            case 'Ash':
-            case 'Squall':
-            case 'Tornado':
-                fullIconURL = `${iconURL}50d.png`;
-                break;
-            default:
-                console.log(`Some other weather form - ${weatherObj.weather[0].description}`);
-                // Default to few clouds
-                if (hour > sunrise && hour < sunset) {
-                    fullIconURL = `${iconURL}02d.png`;
-                } else {
-                    fullIconURL = `${iconURL}02n.png`;
-                }
-                break;
-        };
-        console.log(fullIconURL);
-        return fullIconURL;
-    };
-
+    // Event listener
     searchBtn.on("click", function() {
         event.preventDefault();
         const zipcode = inputEl.val()
 
         $.get(`https://api.openweathermap.org/data/2.5/weather?zip=${zipcode}&appid=e21d1a963abbd9effdb612578581c76c`)
         .then(function(response) {
-
-            console.log(response);
             console.log(response.name);
-            console.log(response.sys.sunrise);
-            const sunset = moment.unix(response.sys.sunset).format('HH.mm');
-            console.log(`Sunset is at ${sunset}`);
-
-            displayCurrentWeather(response)
+            console.log(response);
+            displayCurrentWeather(response);
         });
     });
 
