@@ -94,9 +94,23 @@ const hour = moment().format('HH.mm');
         return newClass;
     };
 
+    // Stores city history info in local storage
+    function saveCity(name, zipcode, latitude, longitude) {
+        const newObj = {Name: name, Zip: zipcode, Latitude: latitude, Longitude: longitude};
+
+        // If the name in the first history object is blank, set the historyData to the new object; otherwise, ad the new object to the array
+        if (!historyData[0].Name) {
+            historyData = [newObj];
+        } else {
+            historyData.push(newObj);
+        }
+
+        console.log(historyData);
+        localStorage.setItem('pastCitiesKEY', JSON.stringify(historyData));
+    };
 
 
-
+    getHistory();
 
     // Event listener
     searchBtn.on("click", function() {
@@ -105,18 +119,20 @@ const hour = moment().format('HH.mm');
 
         $.get(`https://api.openweathermap.org/data/2.5/weather?zip=${zipcode}&appid=e21d1a963abbd9effdb612578581c76c`)
             .then(function(response) {
-                console.log(response.name);
+                const cityName = response.name;
+                console.log(cityName);
                 console.log(response);
                 const latitude = response.coord.lat;
                 const longitude = response.coord.lon;
                 displayCurrentWeather(response);
                 getUVIndex(latitude, longitude);
-                cityArray.push(response.name);
+                cityArray.unshift(response.name); // Adds the new name to the beginning of the array instead of the end
                 console.log(cityArray);
                 addSearchButtons();
                 console.log(`Lat is ${response.coord.lat}, long is ${response.coord.lon}`)
                 // Need to save data to local storage, create buttons for past searches
                 // Store API call.
+                saveCity(cityName, zipcode, latitude, longitude);
             });
     });
 
