@@ -12,7 +12,6 @@ const hour = moment().format('HH.mm');
     const uvIndexPar = $('p.uv-index');
     const uvIndexSpan = $('span#uvindex');
     const previousSearchesEl = $('#previous-searches');
-    const cityArray = [];
 
     // array to be used to store info that will be saved in local storage
     let historyData = [];
@@ -22,11 +21,16 @@ const hour = moment().format('HH.mm');
         historyData = JSON.parse(localStorage.getItem('pastCitiesKEY')) || [{Name:"", Zip: "", Latitude: "", Longitude:""}];
     };
 
+    // For each search, adds a button that can be used to bring back up the search.
     function addSearchButtons() {
         previousSearchesEl.empty();
-        cityArray.forEach(function(city) {
-            const newButton = $("<button>").text(city).addClass('prev-search-btn');
-            previousSearchesEl.append(newButton);
+        // cityArray.forEach(function(city) {
+        //     const newButton = $("<button>").text(city).addClass('prev-search-btn');
+        //     previousSearchesEl.prepend(newButton);
+        // });
+        historyData.forEach(function(city) {
+            const newButton = $("<button>").text(city.Name).addClass('prev-search-btn');
+            previousSearchesEl.prepend(newButton);
         });
     }
 
@@ -111,6 +115,7 @@ const hour = moment().format('HH.mm');
 
 
     getHistory();
+    addSearchButtons();
 
     // Event listener
     searchBtn.on("click", function() {
@@ -126,7 +131,6 @@ const hour = moment().format('HH.mm');
                 const longitude = response.coord.lon;
                 displayCurrentWeather(response);
                 getUVIndex(latitude, longitude);
-                cityArray.unshift(response.name); // Adds the new name to the beginning of the array instead of the end
                 console.log(cityArray);
                 addSearchButtons();
                 console.log(`Lat is ${response.coord.lat}, long is ${response.coord.lon}`)
