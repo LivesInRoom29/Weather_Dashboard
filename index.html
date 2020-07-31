@@ -56,13 +56,18 @@
                         <!-- For the current weather info -->
                         <div class="tile current">
                             <h2 class="subtitle is-3 city-date"></h2>
-                            <img id="weather-icon" src="" alt="">
-                            <p class="temp"></p>
-                            <p class="humidity"></p>
-                            <p class="wind"></p>
-                            <p class="uv-index">
-                                <span class="tag uvlow" id="uvindex"></span>
-                            </p>
+                            <div>
+                                <img id="weather-icon" src="" alt="">
+                            </div>
+                            <div>
+                                <p class="temp"></p>
+                                <p class="humidity"></p>
+                                <p class="wind"></p>
+                                <p class="uv-index"> UV Index:
+                                    <span class="tag" id="uvindex"></span>
+                                </p>
+                            </div>
+
                         </div>
                         <!-- For 5 day forcast -->
                         <div class="tile forcast">
@@ -84,8 +89,9 @@
         </script>
         <!-- Moment.js -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
-        <script type="text/javascript" src="./Assets/weatherIcons.js"></script>
+        <script type="text/javascript" src="./Assets/weathericons1.js"></script>
         <script type="text/javascript" src="./Assets/script.js"></script>
+
 
     </body>
 </html>
