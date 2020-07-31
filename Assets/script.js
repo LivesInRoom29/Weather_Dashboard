@@ -115,14 +115,14 @@ function saveCity(name, zipcode, latitude, longitude) {
     }
 
     console.log(historyData);
+    addSearchButtons();
     localStorage.setItem('pastCitiesKEY', JSON.stringify(historyData));
 };
 
-// To check to see if the city exists in memory (an array of objects) already:
+// To check to see if the city exists in memory (an array of objects) already; if it is, return true, else return false.
 function cityInMem(city, array) {
     for (let i = 0; i < array.length; i++) {
         if (array[i].Name === city) {
-            console.log('city is in history');
             return true;
         }
     }
@@ -133,7 +133,6 @@ function cityInMem(city, array) {
     //         return true;
     //     }
     // });
-    console.log('city isn ot in history');
     return false;
 }
 
