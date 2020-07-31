@@ -26,7 +26,7 @@ function addSearchButtons() {
     previousSearchesEl.empty();
 
     historyData.forEach(function (city) {
-        const newButton = $("<button>").text(city.Name).addClass('prev-search-btn');
+        const newButton = $("<a>").text(city.Name).addClass('panel-block prev-search-btn');
         previousSearchesEl.prepend(newButton);
     });
 }
