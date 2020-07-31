@@ -19,3 +19,31 @@ div.forcast {
     padding: 10px;
     background-color: rgb(243, 241, 241);
 }
+
+/* for the UV index span, use to change colors depending on the index */
+/* 0-2 is low - green */
+span.uvlow {
+    background-color: green;
+    color: white;
+}
+
+/* 3-5 is moderate - yellow */
+span.uvmoderate {
+    background-color: yellow;
+}
+
+/* 6-7 is high - orange */
+span.uvhigh {
+    background-color: orange;
+}
+
+/* 8-10 is very high - red */
+span.uvVeryhigh {
+    background-color: red;
+}
+
+/* 11+ is extreme - purple */
+span.uvextreme {
+    background-color: purple;
+    color: white;
+}
