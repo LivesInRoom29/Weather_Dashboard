@@ -1,106 +1,33 @@
-$(document).ready(function() {
+const hour = moment().format('HH.mm');
+
+// $(document).ready(function() {
 
     const inputEl = $('input#city-search');
     const searchBtn = $('button.search');
     const cityDateEl = $('h2.city-date');
     const weatherIconEl = $('img#weather-icon');
-    const hour = moment().format('HH.mm');
     const tempEl = $('p.temp');
     const humidityEl = $('p.humidity');
     const windEl = $('p.wind');
     const uvIndexPar = $('p.uv-index');
     const uvIndexSpan = $('span#uvindex');
+    const previousSearchesEl = $('#previous-searches');
+    const cityArray = [];
 
-    // Array containing weather details and corresponding icons from OpenWeather API
-    const weatherIconArray = [
-        {weather:'Clear', imgD:'01d.png', imgN:'01n.png'},
-        {weather:'Clouds', details:[
-            {description:'few clouds', imgD:'02d.png', imgN:'02n.png'},
-            {description:'scattered clouds', imgD:'03d.png', imgN:'03n.png'},
-            {description:'broken clouds', imgD:'04d.png', imgN:'04n.png'},
-            {description:'overcast clouds', imgD:'04d.png', imgN:'04n.png'}
-            ]
-        },
-        {weather:'Drizzle', imgD:'09d.png', imgN:'09n.png'},
-        {weather:'Rain', details:[
-            {
-                descriptions:['light intensity shower rain', 'shower rain', 'heavy intensity shower rain', 'ragged shower rain'],
-                imgD:'09d.png',
-                imgN:'09n.png'
-            },
-            {description:'freezing rain', imgD:'13d.png', imgN:'13n.png'},
-            {
-                descriptions:['light rain', 'moderate rain', 'heavy intensity rain', 'extreme rain'],
-                imgD:'10d.png',
-                imgN:'10n.png'
-            }
-            ]
-        },
-        {weather:'Thunderstorm', imgD:'11d.png', imgN:'11n.png'},
-        {weather:'Snow', imgD:'13d.png', imgN:'13n.png'},
-        {weather:['Mist', 'Smoke', 'Haze', 'Dust', 'Fog', 'Sand', 'Ash', 'Squall', 'Tornado'], imgD:'50d.png', imgN:'50n.png'},
-    ];
+    // array to be used to store info that will be saved in local storage
+    let historyData = [];
 
-    function getWeatherIcon(weatherObj) {
-        const iconURL = 'http://openweathermap.org/img/wn/';
-        let fullIconURL = '';
-        const sunrise = moment.unix(weatherObj.sys.sunrise).format('HH.mm');
-        const sunset = moment.unix(weatherObj.sys.sunset).format('HH.mm');
-        // Current weather conditions
-        const weatherCond = weatherObj.weather[0].main;
-
-        // Get the index of the array where the oject in the array contains the weather condition as a value
-        const index = weatherIconArray.findIndex(x => x.weather === weatherCond);
-
-        // If the object has weather, imgD and imgN
-        if (Object.keys(weatherIconArray[index]).length === 3) {
-            // If it's between surise and sunset, use the daytime icon (imgD), otherwise use the nighttime icond (imgN)
-            if (hour > sunrise && hour < sunset) {
-                fullIconURL = iconURL + weatherIconArray[index].imgD;
-            } else {
-                fullIconURL = iconURL + weatherIconArray[index].imgN;
-            }
-        } else {
-            const detailsArray = weatherIconArray[index].details;
-            const weatherDescr= weatherObj.weather[0].description;
-            const imgIcon = findImgFromDetails(detailsArray, weatherDescr, weatherObj);
-            fullIconURL = iconURL + imgIcon;
-        }
-        return fullIconURL;
+    // Gets info from local storage and stores it in the historyData variable if there is any available.
+    function getHistory() {
+        historyData = JSON.parse(localStorage.getItem('pastCitiesKEY')) || [{Name:"", Zip: "", Latitude: "", Longitude:""}];
     };
 
-    // Details is an array of objects, weatherDescription is the weather description (ex. 'few clouds' or 'moderate rain') we are looking for.
-    function findImgFromDetails(details, weatherDescription, weatherObj) {
-        let img = ''
-        const sunrise = moment.unix(weatherObj.sys.sunrise).format('HH.mm');
-        const sunset = moment.unix(weatherObj.sys.sunset).format('HH.mm');
-        details.forEach(function(object) {
-            // If the key 'description' is in the object, there is only one description - just get the img name
-            if ('description' in object) {
-                if (object.description === weatherDescription) {
-                    // If it's between surise and sunset, use the daytime icon (imgD), otherwise use the nighttime icond (imgN)
-                    if (hour > sunrise && hour < sunset) {
-                        img = object.imgD;
-                    } else {
-                        img = object.imgN;
-                    }
-                }
-            // Otherwise, there are multiple descriptions
-            } else {
-                const descriptionsArray = object.descriptions;
-                descriptionsArray.forEach(function(description) {
-                    if (description === weatherDescription) {
-                        // If it's between surise and sunset, use the daytime icon (imgD), otherwise use the nighttime icond (imgN)
-                        if (hour > sunrise && hour < sunset) {
-                            img = object.imgD;
-                        } else {
-                            img = object.imgN;
-                        }
-                    }
-                });
-            }
+    function addSearchButtons() {
+        previousSearchesEl.empty();
+        cityArray.forEach(function(city) {
+            const newButton = $("<button>").text(city).addClass('prev-search-btn');
+            previousSearchesEl.append(newButton);
         });
-        return img;
     }
 
     // Display the current weather, including weather icon, in the city-date heading.
@@ -135,22 +62,39 @@ $(document).ready(function() {
         return(((kelvin - 273.15) * 1.8) + 32);
     };
 
+    // Calls the API again to get the UV Index, then displays the index with the proper color background
     function getUVIndex(latitude, longitude) {
         $.get(`https://api.openweathermap.org/data/2.5/uvi?lat=${latitude}&lon=${longitude}&appid=e21d1a963abbd9effdb612578581c76c`)
             .then(function(uvResponse) {
                 const uvIndex = uvResponse.value;
-                console.log(uvIndex);
-                const uvIndexColor = getUVindexColor(uvIndex);
-                uvIndexPar.prepend(`UV Index: `);
-                uvIndexSpan.text(uvIndex);
+                const uvIndexClass = getUVindexColor(uvIndex);
+                uvIndexSpan.text(uvIndex).attr('class', `tag ${uvIndexClass}`);
             });
     }
 
     // Uses the uv index to select the correct class to make the background color correspond to the the scale from the WHO (https://www.epa.gov/sunsafety/uv-index-scale-0)
     function getUVindexColor(uvIndex) {
-        // switch(uvIndex):
-        //     case
+        let newClass = ''
+        console.log(uvIndex);
+
+        if (uvIndex < 2.5) {
+            newClass = 'uvlow';
+        } else if (uvIndex >= 2.5 && uvIndex < 5.5) {
+            newClass = 'uvmoderate';
+        } else if (uvIndex >= 5.5 && uvIndex < 7.5) {
+            newClass = 'uvhigh';
+        } else if (uvIndex >= 7.5 && uvIndex < 10.5) {
+            newClass = 'uvVeryhigh';
+        } else {
+            newClass = 'uvextreme';
+        }
+
+        console.log(`uv index is ${uvIndex}`);
+        console.log(`new class is ${newClass}`);
+        return newClass;
     };
+
+
 
 
 
@@ -167,11 +111,15 @@ $(document).ready(function() {
                 const longitude = response.coord.lon;
                 displayCurrentWeather(response);
                 getUVIndex(latitude, longitude);
-
+                cityArray.push(response.name);
+                console.log(cityArray);
+                addSearchButtons();
                 console.log(`Lat is ${response.coord.lat}, long is ${response.coord.lon}`)
+                // Need to save data to local storage, create buttons for past searches
+                // Store API call.
             });
     });
 
 
 
-});
+// });
