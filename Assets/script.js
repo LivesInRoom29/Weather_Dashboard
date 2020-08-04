@@ -26,7 +26,7 @@ function addSearchButtons() {
     previousSearchesEl.empty();
 
     historyData.forEach(function (city) {
-        const newButton = $("<a>").text(city.Name).addClass('panel-block prev-search-btn');
+        const newButton = $("<a>").text(city.Name).addClass('panel-block prev-search-btn').attr('data-zip', city.Zip);
         previousSearchesEl.prepend(newButton);
     });
 }
@@ -41,7 +41,7 @@ function displayCurrentWeather(weatherObject) {
     // To display the name of the location and the date
     cityDateEl.text(`${weatherObject.name} (${currentDate})`);
     // To display the correct icon that correspnds to weather condition.
-    const iconURL = getWeatherIcon(weatherObject);
+    const iconURL = `http://openweathermap.org/img/wn/${weatherObject.weather[0].icon}.png`
     weatherIconEl.attr('src', iconURL).attr('alt', weatherCondition);
 
     // Uses function to convert Kelvin to Fahrenheit and rounds to 1 decimal place; displays result in temp <p>
@@ -126,13 +126,6 @@ function cityInMem(city, array) {
             return true;
         }
     }
-    // Can't break out of a forEach loop??
-    // array.forEach(function (cityObject) {
-    //     if (cityObject.Name === city) {
-    //         console.log('city is in history');
-    //         return true;
-    //     }
-    // });
     return false;
 }
 
@@ -146,32 +139,46 @@ function removeObj (array, key, value) {
     })
 }
 
+// Takes the response from calling the OpenWeather API and uses it to display current weather, get and diplay the UV index, save the new city in local storage and add a search button for the city
+function useWeatherData(response, zipcode) {
+    const cityName = response.name;
+    console.log(cityName);
+    console.log(response);
+    const latitude = response.coord.lat;
+    const longitude = response.coord.lon;
+    displayCurrentWeather(response);
+    getUVIndex(latitude, longitude);
+    console.log(`Lat is ${response.coord.lat}, long is ${response.coord.lon}`)
+    // Need to save data to local storage, create buttons for past searches
+    // Store API call.
+    saveCity(cityName, zipcode, latitude, longitude);
+}
+
 
 getHistory();
 addSearchButtons();
 
-// Event listener
+// Event listener for the blue Search Button
 searchBtn.on("click", function () {
     event.preventDefault();
-    const zipcode = inputEl.val()
-
+    const zipcode = inputEl.val();
+    // Use the
     $.get(`https://api.openweathermap.org/data/2.5/weather?zip=${zipcode}&appid=e21d1a963abbd9effdb612578581c76c`)
         .then(function (response) {
-            const cityName = response.name;
-            console.log(cityName);
-            console.log(response);
-            const latitude = response.coord.lat;
-            const longitude = response.coord.lon;
-            displayCurrentWeather(response);
-            getUVIndex(latitude, longitude);
-            addSearchButtons();
-            console.log(`Lat is ${response.coord.lat}, long is ${response.coord.lon}`)
-            // Need to save data to local storage, create buttons for past searches
-            // Store API call.
-            saveCity(cityName, zipcode, latitude, longitude);
+            useWeatherData(response, zipcode);
         });
+    // Clear input field
+    inputEl.val('');
 });
 
-
-
-// });
+// Event listener for PREVIOUS SEARCH buttons
+previousSearchesEl.on("click", "a", function() {
+    const thisBtn = $(this);
+    console.log(thisBtn.attr('data-zip'));
+    const thisZip = thisBtn.attr('data-zip');
+    //Use the data-id (cityID) to call the API and use the response in the useWeatherData function
+    $.get(`https://api.openweathermap.org/data/2.5/weather?zip=${thisZip}&appid=e21d1a963abbd9effdb612578581c76c`)
+        .then(function (response) {
+            useWeatherData(response, thisZip);
+    });
+});
