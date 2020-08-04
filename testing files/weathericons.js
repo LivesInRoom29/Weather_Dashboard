@@ -31,35 +31,38 @@ const weatherIconArray = [
     { weather: ['Mist', 'Smoke', 'Haze', 'Dust', 'Fog', 'Sand', 'Ash', 'Squall', 'Tornado'], imgD: '50d.png', imgN: '50n.png' },
 ];
 
+// This may not work for fog, etc yet (last object)
+
 function getWeatherIcon(weatherObj) {
-    const iconURL = 'http://openweathermap.org/img/wn/';
-    let fullIconURL = '';
-    const sunrise = moment.unix(weatherObj.sys.sunrise).format('HH.mm');
-    const sunset = moment.unix(weatherObj.sys.sunset).format('HH.mm');
-    // Current weather conditions
-    const weatherCond = weatherObj.weather[0].main;
+    const iconURL = `http://openweathermap.org/img/wn/${weatherObj.weather[0].icon}`;
+}
 
-    // Get the index of the array where the oject in the array contains the weather condition as a value
-    const index = weatherIconArray.findIndex(x => x.weather === weatherCond);
+//     const sunrise = moment.unix(weatherObj.sys.sunrise).format('HH.mm');
+//     const sunset = moment.unix(weatherObj.sys.sunset).format('HH.mm');
+//     // Current weather conditions
+//     const weatherCond = weatherObj.weather[0].main;
 
-    // If the object has weather, imgD and imgN
-    if (Object.keys(weatherIconArray[index]).length === 3) {
-        // If it's between surise and sunset, use the daytime icon (imgD), otherwise use the nighttime icond (imgN)
-        if (hour > sunrise && hour < sunset) {
-            fullIconURL = iconURL + weatherIconArray[index].imgD;
-        } else {
-            fullIconURL = iconURL + weatherIconArray[index].imgN;
-        }
-    } else {
-        const detailsArray = weatherIconArray[index].details;
-        console.log(detailsArray);
-        const weatherDescr = weatherObj.weather[0].description;
-        console.log(weatherDescr);
-        const imgIcon = findImgFromDetails(detailsArray, weatherDescr, weatherObj);
-        fullIconURL = iconURL + imgIcon;
-    }
-    return fullIconURL;
-};
+//     // Get the index of the array where the oject in the array contains the weather condition as a value
+//     const index = weatherIconArray.findIndex(x => x.weather === weatherCond);
+
+//     // If the object has weather, imgD and imgN
+//     if (Object.keys(weatherIconArray[index]).length === 3) {
+//         // If it's between surise and sunset, use the daytime icon (imgD), otherwise use the nighttime icond (imgN)
+//         if (hour > sunrise && hour < sunset) {
+//             fullIconURL = iconURL + weatherIconArray[index].imgD;
+//         } else {
+//             fullIconURL = iconURL + weatherIconArray[index].imgN;
+//         }
+//     } else {
+//         const detailsArray = weatherIconArray[index].details;
+//         console.log(detailsArray);
+//         const weatherDescr = weatherObj.weather[0].description;
+//         console.log(weatherDescr);
+//         const imgIcon = findImgFromDetails(detailsArray, weatherDescr, weatherObj);
+//         fullIconURL = iconURL + imgIcon;
+//     }
+//     return fullIconURL;
+// };
 
 // Details is an array of objects, weatherDescription is the weather description (ex. 'few clouds' or 'moderate rain') we are looking for.
 function findImgFromDetails(details, weatherDescription, weatherObj) {
