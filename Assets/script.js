@@ -12,6 +12,7 @@ const windEl = $('p.wind');
 const uvIndexPar = $('p.uv-index');
 const uvIndexSpan = $('span#uvindex');
 const previousSearchesEl = $('#previous-searches');
+const forecastContainerEl = $('div.forecast-container');
 
 // array to be used to store info that will be saved in local storage
 let historyData = [];
@@ -154,6 +155,34 @@ function useWeatherData(response, zipcode) {
     saveCity(cityName, zipcode, latitude, longitude);
 }
 
+function getForecast(forecastAPIcall) {
+    const fiveDays = forecastAPIcall.daily;
+    // Inside the template that will be cloned
+    const $dayBlock = $(document.getElementById("template-forecast-block").innerHTML);
+    const $fragContainer = $(document.createDocumentFragment());
+
+    // Gets data from the API response and fills 5 clones of the HTML template for the 5 day forecast
+    for(let i = 1; i < 6; i++) {
+        const daily = fiveDays[i];
+        const date = moment.unix(daily.dt).format('l');
+        const iconURL = `http://openweathermap.org/img/wn/${daily.weather[0].icon}.png`;
+        const description = daily.weather[0].description;
+        console.log(iconURL, description);
+        // Converts temp from Kelvin to Fahrenheit
+        const temp = (kToF(daily.temp.day)).toFixed(2);
+        const humidity = daily.humidity;
+
+        const $clone = $dayBlock.clone();
+        $clone.find('h4.date').text(date);
+        $clone.find('img#forecast-icon').attr('src', iconURL).attr('alt', description);
+        $clone.find('p.forecast-temp').html(`Temp: ${temp} &#8457;`);
+        $clone.find('p.forecast-humidity').text(`Humidity: ${humidity}%`);
+
+        $fragContainer.append($clone);
+        forecastContainerEl.append($fragContainer);
+    }
+};
+
 
 getHistory();
 addSearchButtons();
@@ -162,13 +191,21 @@ addSearchButtons();
 searchBtn.on("click", function () {
     event.preventDefault();
     const zipcode = inputEl.val();
-    // Use the
-    $.get(`https://api.openweathermap.org/data/2.5/weather?zip=${zipcode}&appid=e21d1a963abbd9effdb612578581c76c`)
-        .then(function (response) {
-            useWeatherData(response, zipcode);
-        });
+    // Use the zipcode to make the API call and send the response and zip code to the useWeatherData func
+    // $.get(`https://api.openweathermap.org/data/2.5/weather?zip=${zipcode}&appid=e21d1a963abbd9effdb612578581c76c`)
+    //     .then(function (response) {
+    //         useWeatherData(response, zipcode);
+    //     });
+    // $.get(`api.openweathermap.org/data/2.5/forecast?zip=${zipcode}&appid=e21d1a963abbd9effdb612578581c76c`)
+    //     .then(function(response) {
+    //         getForecast(response);
+    //     })
+    useWeatherData(weatherData1, zipcode);
+    getForecast(oneCall);
     // Clear input field
     inputEl.val('');
+
+
 });
 
 // Event listener for PREVIOUS SEARCH buttons

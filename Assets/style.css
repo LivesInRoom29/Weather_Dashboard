@@ -47,3 +47,17 @@ span.uvextreme {
     background-color: purple;
     color: white;
 }
+/* For forecast */
+div.hiddenTemplate {
+    display: none;
+}
+
+div.forecast {
+    color: white;
+    background-color: rgb(93, 121, 197);
+    border-radius: 5px;
+}
+
+p.forecast-temp, .forecast-humidity {
+    /* font-size: 16px; Not changing the font */
+}

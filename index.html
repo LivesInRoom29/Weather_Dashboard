@@ -52,12 +52,12 @@
                         </div>
                     </aside>
 
-                    <main class="tile is-parent is-vertical pl-3 pr-0">
+                    <main class="tile is-vertical pl-3 pr-0">
                         <!-- For the current weather info -->
-                        <div class="tile current">
+                        <div class="tile is-vertical current">
                             <h2 class="subtitle is-3 city-date"></h2>
                             <div>
-                                <img id="weather-icon" src="" alt="">
+                                <img id="weather-icon" src=""" alt="">
                             </div>
                             <div>
                                 <p class="temp"></p>
@@ -70,16 +70,26 @@
 
                         </div>
                         <!-- For 5 day forcast -->
-                        <div class="tile forcast">
-                            5 day forcast...to come
+                        <div class="tile is-vertical">
+                            <h3 class="subtitle is-4">5-Day Forecast:</h3>
+                            <!-- Template contains the elements to be cloned -->
+                            <div class="columns forecast-container">
+                                <div id="template-forecast-block" class="hiddenTemplate">
+                                    <div class="column is-vertical forecast">
+                                        <h4 class="subtitle is-6 has-text-white date">Tomorrow's Date</h4>
+                                        <div class="icon" role="icon">
+                                            <img id="forecast-icon" src="" alt="">
+                                        </div>
+                                        <p class="forecast-temp">Temp: 78.5 &#8457;</p>
+                                        <p class="forecast-humidity">Humidty: 50%</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </main>
-
                 </div>
             </div>
         </div>
-
-
 
 
         <script
@@ -89,7 +99,8 @@
         </script>
         <!-- Moment.js -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
-        <script type="text/javascript" src="./Assets/weathericons.js"></script>
+        <!-- <script type="text/javascript" src="./Assets/weathericons.js"></script> -->
+        <script type="text/javascript" src="./testing files/apiObjects.js"></script>
         <script type="text/javascript" src="./Assets/script.js"></script>
 
 
