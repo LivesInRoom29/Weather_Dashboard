@@ -47,17 +47,42 @@ span.uvextreme {
     background-color: purple;
     color: white;
 }
+
 /* For forecast */
+/* To hide the templte tile */
 div.hiddenTemplate {
     display: none;
 }
 
+div.tile.is-parent.forecast-block {
+    margin: -7px;
+    max-width: 30%;
+}
+
+/* For each of the 5 individual tiles */
 div.forecast {
     color: white;
     background-color: rgb(93, 121, 197);
-    border-radius: 5px;
+    border-radius: 4px;
+    padding: 5px;
 }
 
 p.forecast-temp, .forecast-humidity {
-    /* font-size: 16px; Not changing the font */
+    font-size: 13px;
+}
+
+/* For the icons */
+/* Current weather */
+div.icon {
+    justify-content: end;
+}
+
+img#weather-icon {
+    max-width: 3rem;
+}
+
+/* Forecast */
+img#forecast-icon {
+    max-width: 2.5rem;
+    padding-bottom: 10px;
 }

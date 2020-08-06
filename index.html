@@ -29,9 +29,9 @@
             </div>
 
             <div class="container mx-3">
-                <div class="tile is-ancestor col-4">
+                <div class="tile is-ancestor col-3">
                     <!-- For the search field -->
-                    <aside class="field search is-4 is-vertical px-3 py-1">
+                    <aside class="field search is-3 is-vertical px-1 py-1">
                         <form class="mb-2">
                             <label class="label" for="city-search">Search for a City By Zip Code:</label>
                             <div class="field has-addons">
@@ -52,9 +52,9 @@
                         </div>
                     </aside>
 
-                    <main class="tile is-vertical pl-3 pr-0">
+                    <main class="tile is-vertical pl-2 pr-0">
                         <!-- For the current weather info -->
-                        <div class="tile is-vertical current">
+                        <div class="tile is-vertical current mt-2">
                             <h2 class="subtitle is-3 city-date"></h2>
                             <div>
                                 <img id="weather-icon" src=""" alt="">
@@ -71,17 +71,19 @@
                         </div>
                         <!-- For 5 day forcast -->
                         <div class="tile is-vertical">
-                            <h3 class="subtitle is-4">5-Day Forecast:</h3>
+                            <h3 class="subtitle is-5 has-text-weight-semibold mb-1">5-Day Forecast:</h3>
                             <!-- Template contains the elements to be cloned -->
-                            <div class="columns forecast-container">
+                            <div class="tile forecast-container">
                                 <div id="template-forecast-block" class="hiddenTemplate">
-                                    <div class="column is-vertical forecast">
-                                        <h4 class="subtitle is-6 has-text-white date">Tomorrow's Date</h4>
-                                        <div class="icon" role="icon">
-                                            <img id="forecast-icon" src="" alt="">
+                                    <div class="tile is-parent forecast-block">
+                                        <div class="tile is-vertical forecast">
+                                            <h4 class="subtitle is-6 has-text-weight-medium has-text-white date">Tomorrow's Date</h4>
+                                            <div class="icon" role="icon">
+                                                <img id="forecast-icon" class="is-size-2" src="" alt="">
+                                            </div>
+                                            <p class="forecast-temp">Temp: 78.5 &#8457;</p>
+                                            <p class="forecast-humidity">Humidty: 50%</p>
                                         </div>
-                                        <p class="forecast-temp">Temp: 78.5 &#8457;</p>
-                                        <p class="forecast-humidity">Humidty: 50%</p>
                                     </div>
                                 </div>
                             </div>
