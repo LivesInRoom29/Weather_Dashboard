@@ -2,7 +2,8 @@ const hour = moment().format('HH.mm');
 
 $(document).ready(function() {
     // Variables for DOM elements
-    const inputEl = $('input#city-search');
+    const zipInputEl = $('input#city-search');
+    const countryInputEl = $('input#country-autocomplete');
     const searchBtn = $('button.search');
     const cityDateEl = $('h2.city-date');
     const weatherIconEl = $('img#weather-icon');
@@ -18,7 +19,7 @@ $(document).ready(function() {
 
     // Gets info from local storage and stores it in the historyData variable if there is any available.
     function getHistory() {
-        historyData = JSON.parse(localStorage.getItem('pastCitiesKEY')) || [{ Name: "", Zip: "", Latitude: "", Longitude: "" }];
+        historyData = JSON.parse(localStorage.getItem('pastCitiesKEY')) || [{ Name: "", Zip: "", Country: "", Latitude: "", Longitude: "" }];
     };
 
     // For each search, adds a button that can be used to bring back up the search.
@@ -26,7 +27,7 @@ $(document).ready(function() {
         previousSearchesEl.empty();
 
         historyData.forEach(function (city) {
-            const newButton = $("<a>").text(city.Name).addClass('panel-block prev-search-btn').attr('data-zip', city.Zip);
+            const newButton = $("<a>").text(city.Name).addClass('panel-block prev-search-btn').attr('data-zip', city.Zip).attr('data-country', city.Country);
             previousSearchesEl.append(newButton);
         });
     }
@@ -34,12 +35,14 @@ $(document).ready(function() {
     // To display the most recent search when the page is reloaded. If no past search history exists, diplay data for Wells, ME
     function displayLastSearch() {
         let zipcode = historyData[0].Zip;
+        let countrycode = historyData[0].Country;
         // If the last item in the array contains a Zip that is not blank (if there is at least one past search saved)
         if (!zipcode) {
             zipcode = '04090';
+            countrycode = 'us';
         }
         //Use the zipcode to make the API call and send the response and zip code to the useWeatherData func
-        getCurrentAndForecast(zipcode);
+        getCurrentAndForecast(zipcode, countrycode);
     }
 
     // Display the current weather, including weather icon, in the city-date heading.
@@ -103,8 +106,9 @@ $(document).ready(function() {
     };
 
     // Stores city history info in local storage
-    function saveCity(name, zipcode, latitude, longitude) {
-        const newObj = { Name: name, Zip: zipcode, Latitude: latitude, Longitude: longitude };
+    function saveCity(name, zipcode, countrycode, latitude, longitude) {
+        console.log(`Country is: ${countrycode}.`)
+        const newObj = { Name: name, Zip: zipcode, Country: countrycode, Latitude: latitude, Longitude: longitude };
 
         // If the name in the first history object is blank, set the historyData to the new object; otherwise, ad the new object to the array
         if (!historyData[0].Name) {
@@ -145,14 +149,15 @@ $(document).ready(function() {
     }
 
     // Takes the response from calling the OpenWeather API and uses it to display current weather, get and diplay the UV index, save the new city in local storage and add a search button for the city
-    function useWeatherData(response, zipcode) {
+    function useWeatherData(response, zipcode, countrycode) {
+        console.log(`UseWeather cc: ${countrycode}`)
         const cityName = response.name;
         const latitude = response.coord.lat;
         const longitude = response.coord.lon;
         displayCurrentWeather(response);
         getUVIndex(latitude, longitude);
         // To save data to local storage
-        saveCity(cityName, zipcode, latitude, longitude);
+        saveCity(cityName, zipcode, countrycode, latitude, longitude);
     }
 
     // Uses data from the API forecast call to clone the forecast tile
@@ -184,10 +189,10 @@ $(document).ready(function() {
         }
     };
 
-    function getCurrentAndForecast(zipcode) {
-        $.get(`https://api.openweathermap.org/data/2.5/weather?zip=${zipcode}&appid=e21d1a963abbd9effdb612578581c76c`)
+    function getCurrentAndForecast(zipcode, countrycode) {
+        $.get(`https://api.openweathermap.org/data/2.5/weather?zip=${zipcode},${countrycode}&appid=e21d1a963abbd9effdb612578581c76c`)
             .then(function (response) {
-                useWeatherData(response, zipcode);
+                useWeatherData(response, zipcode, countrycode);
                 const latitude = response.coord.lat;
                 const longitude = response.coord.lon;
                 $.get(`https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&exclude=current,minutely,hourly&appid=e21d1a963abbd9effdb612578581c76c`)
@@ -202,21 +207,32 @@ $(document).ready(function() {
     displayLastSearch();
     addSearchButtons();
 
+    // For the autocomplete of country codes; source: https://www.tutorialspoint.com/jqueryui/jqueryui_autocomplete.htm
+    $(function() {
+        $( "#country-autocomplete" ).autocomplete({
+           source: countryCodes,
+           minlength: 2
+        });
+     });
+
     // Event listener for the blue Search Button
     searchBtn.on("click", function () {
         event.preventDefault();
-        const zipcode = inputEl.val();
+        const zipcode = zipInputEl.val();
+        const countrycode = countryInputEl.val();
+        console.log(countrycode);
         //Use the zipcode to make the API call and send the response and zip code to the useWeatherData func
-        getCurrentAndForecast(zipcode);
+        getCurrentAndForecast(zipcode, countrycode);
         // Clear input field
-        inputEl.val('');
+        zipInputEl.val('');
     });
 
     // Event listener for PREVIOUS SEARCH buttons
     previousSearchesEl.on("click", "a", function() {
         const thisBtn = $(this);
         const thisZip = thisBtn.attr('data-zip');
+        const thisCountry = thisBtn.attr('data-country');
         //Use the zipcode to call the API and use the response in the useWeatherData function
-        getCurrentAndForecast(thisZip);
+        getCurrentAndForecast(thisZip, thisCountry);
     });
 });
