@@ -1,7 +1,7 @@
 const hour = moment().format('HH.mm');
 
 $(document).ready(function() {
-
+    // Variables for DOM elements
     const inputEl = $('input#city-search');
     const searchBtn = $('button.search');
     const cityDateEl = $('h2.city-date');
@@ -9,7 +9,6 @@ $(document).ready(function() {
     const tempEl = $('p.temp');
     const humidityEl = $('p.humidity');
     const windEl = $('p.wind');
-    const uvIndexPar = $('p.uv-index');
     const uvIndexSpan = $('span#uvindex');
     const previousSearchesEl = $('#previous-searches');
     const forecastContainerEl = $('div.forecast-container');
@@ -49,7 +48,6 @@ $(document).ready(function() {
         const currentDate = moment().format('M/D/YYYY');
         // weatherCond is an object inside the weatherObject that contains the temp and humidity
         const weatherCondition = weatherObject.weather[0].main;
-        console.log(weatherCondition);
         // To display the name of the location and the date
         cityDateEl.text(`${weatherObject.name} (${currentDate})`);
         // To display the correct icon that correspnds to weather condition.
@@ -88,7 +86,6 @@ $(document).ready(function() {
     // Uses the uv index to select the correct class to make the background color correspond to the the scale from the WHO (https://www.epa.gov/sunsafety/uv-index-scale-0)
     function getUVindexColor(uvIndex) {
         let newClass = ''
-        console.log(uvIndex);
 
         if (uvIndex < 2.5) {
             newClass = 'uvlow';
@@ -102,8 +99,6 @@ $(document).ready(function() {
             newClass = 'uvextreme';
         }
 
-        console.log(`uv index is ${uvIndex}`);
-        console.log(`new class is ${newClass}`);
         return newClass;
     };
 
@@ -137,7 +132,7 @@ $(document).ready(function() {
             }
         }
         return false;
-    }
+    };
 
     // Function to remove an object from an array if a certain value exists in the object
     // Adpated from 3rd answer on https://stackoverflow.com/questions/21659888/javascript-find-and-remove-object-in-array-based-on-key-value
@@ -152,18 +147,15 @@ $(document).ready(function() {
     // Takes the response from calling the OpenWeather API and uses it to display current weather, get and diplay the UV index, save the new city in local storage and add a search button for the city
     function useWeatherData(response, zipcode) {
         const cityName = response.name;
-        console.log(cityName);
-        console.log(response);
         const latitude = response.coord.lat;
         const longitude = response.coord.lon;
         displayCurrentWeather(response);
         getUVIndex(latitude, longitude);
-        console.log(`Lat is ${response.coord.lat}, long is ${response.coord.lon}`)
-        // Need to save data to local storage, create buttons for past searches
-        // Store API call.
+        // To save data to local storage
         saveCity(cityName, zipcode, latitude, longitude);
     }
 
+    // Uses data from the API forecast call to clone the forecast tile
     function getForecast(forecastAPIcall) {
         const fiveDays = forecastAPIcall.daily;
         // Inside the template that will be cloned
@@ -223,7 +215,6 @@ $(document).ready(function() {
     // Event listener for PREVIOUS SEARCH buttons
     previousSearchesEl.on("click", "a", function() {
         const thisBtn = $(this);
-        console.log(thisBtn.attr('data-zip'));
         const thisZip = thisBtn.attr('data-zip');
         //Use the zipcode to call the API and use the response in the useWeatherData function
         getCurrentAndForecast(thisZip);
