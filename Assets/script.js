@@ -26,7 +26,8 @@ $(document).ready(function() {
     function addSearchButtons() {
         previousSearchesEl.empty();
 
-        historyData.forEach(function (city) {
+        // Use the first 6 cities in the array to populate the search buttons
+        historyData.slice(0,6).forEach(function (city) {
             const newButton = $("<a>").text(city.Name).addClass('panel-block prev-search-btn').attr('data-zip', city.Zip).attr('data-country', city.Country);
             previousSearchesEl.append(newButton);
         });
@@ -166,7 +167,8 @@ $(document).ready(function() {
         // Inside the template that will be cloned
         const $dayBlock = $(document.getElementById("template-forecast-block").innerHTML);
         const $fragContainer = $(document.createDocumentFragment());
-
+        // Clear the forecast container
+        forecastContainerEl.empty();
         // Gets data from the API response and fills 5 clones of the HTML template for the 5 day forecast
         for(let i = 1; i < 6; i++) {
             // Starts at one day ahead, and continues through the next 4 days

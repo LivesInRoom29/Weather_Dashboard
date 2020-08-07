@@ -81,19 +81,22 @@
                         <div class="tile is-vertical">
                             <h3 class="subtitle is-5 has-text-weight-semibold mb-1">5-Day Forecast:</h3>
                             <!-- Template contains the elements to be cloned -->
-                            <div class="tile forecast-container">
-                                <div id="template-forecast-block" class="hiddenTemplate">
-                                    <div class="tile is-parent forecast-block">
-                                        <div class="tile is-vertical forecast">
-                                            <h4 class="subtitle is-6 has-text-weight-medium has-text-white date">Tomorrow's Date</h4>
-                                            <div class="icon" role="icon">
-                                                <img id="forecast-icon" class="is-size-2" src="" alt="">
-                                            </div>
-                                            <p class="forecast-temp">Temp: 78.5 &#8457;</p>
-                                            <p class="forecast-humidity">Humidty: 50%</p>
+                            <div id="template-forecast-block" class="hiddenTemplate">
+                                <div class="tile is-parent forecast-block">
+                                    <div class="tile is-vertical forecast">
+                                        <h4 class="subtitle is-6 has-text-weight-medium has-text-white date">Tomorrow's Date</h4>
+                                        <div class="icon" role="icon">
+                                            <img id="forecast-icon" class="is-size-2" src="" alt="">
                                         </div>
+                                        <p class="forecast-temp">Temp: 78.5 &#8457;</p>
+                                        <p class="forecast-humidity">Humidty: 50%</p>
                                     </div>
                                 </div>
+                            </div>
+                            <!-- Where the cloned templates will be appended -->
+                            <div class="tile forecast-container">
+
+                            </div>
                             </div>
                         </div>
                     </main>
