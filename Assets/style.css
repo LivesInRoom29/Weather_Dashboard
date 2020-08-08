@@ -5,6 +5,11 @@ header {
 
 }
 
+/* For the previous search buttons */
+a.prev-search-btn {
+    background-color: rgba(277, 113, 85, 0.7);
+}
+
 aside {
     background-color: lightgrey;
 }
@@ -15,9 +20,29 @@ div.current {
     padding: 10px;
 }
 
+div.tile.current-heading {
+    max-height: 80px;
+    display: flex;
+}
+
+h2.city-date {
+    max-height: 50px;
+}
+
+/* Forecast elements */
+/* Parent forecast-block */
+div.tile.is-parent.forecast-block {
+    max-height: 160px;
+}
+
 div.forcast {
     padding: 10px;
     background-color: rgb(243, 241, 241);
+}
+
+/* Forecast temp annd humidity */
+div.forecast-text {
+    margin-top: 10px;
 }
 
 /* for the UV index span, use to change colors depending on the index */
@@ -49,7 +74,7 @@ span.uvextreme {
 }
 
 /* For forecast */
-/* To hide the templte tile */
+/* To hide the tempalte tile */
 div.hiddenTemplate {
     display: none;
 }
@@ -65,6 +90,7 @@ div.forecast {
     background-color: rgb(93, 121, 197);
     border-radius: 4px;
     padding: 5px;
+    min-width: 95px;
 }
 
 p.forecast-temp, .forecast-humidity {
@@ -79,10 +105,46 @@ div.icon {
 
 img#weather-icon {
     max-width: 3rem;
+    max-height: 3rem;
+    margin-bottom: 20px;
+    margin-left: 20px;
 }
 
 /* Forecast */
 img#forecast-icon {
     max-width: 2.5rem;
     padding-bottom: 10px;
+}
+
+/* For when the screen is below 480px (mobile)*/
+@media only screen and (max-width: 480px) {
+    main {
+        padding: 0;
+    }
+    /* For the current weather section */
+    h2.subtitle.city-date {
+        margin-bottom: 25px;
+    }
+    div.tile.current-heading {
+        /* max-height: 100px; */
+        display: block;
+    }
+    h3.subtitle.is-5 {
+        padding-left: 15px;
+    }
+    div.tile.current-details {
+        margin-top: 45px;
+    }
+
+    /* For the forecast section */
+    div.tile.is-parent.forecast-block {
+        margin: auto;
+        max-width: 100%;
+    }
+}
+
+@media only screen and (max-width:768px) and (min-width: 481px) {
+    div.tile.forecast-container {
+        display: flex;
+    }
 }
