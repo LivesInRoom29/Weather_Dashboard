@@ -24,6 +24,7 @@ $(document).ready(function() {
 
     // For each search, adds a button that can be used to bring back up the search.
     function addSearchButtons() {
+        // Clears the previous search buttons before re-populating
         previousSearchesEl.empty();
 
         // Use the first 6 cities in the array to populate the search buttons
@@ -31,7 +32,7 @@ $(document).ready(function() {
             const newButton = $("<a>").text(city.Name).addClass('panel-block prev-search-btn').attr('data-zip', city.Zip).attr('data-country', city.Country);
             previousSearchesEl.append(newButton);
         });
-    }
+    };
 
     // To display the most recent search when the page is reloaded. If no past search history exists, diplay data for Wells, ME
     function displayLastSearch() {
@@ -44,7 +45,7 @@ $(document).ready(function() {
         }
         //Use the zipcode to make the API call and send the response and zip code to the useWeatherData func
         getCurrentAndForecast(zipcode, countrycode);
-    }
+    };
 
     // Display the current weather, including weather icon, in the city-date heading.
     // Displays temp, humidty, wind speed.
@@ -68,8 +69,6 @@ $(document).ready(function() {
         // Converts wind speed from the weather API from meters per second to miles per hour and displays it in wind <p>
         const windSpeed = (weatherObject.wind.speed * 2.2369).toFixed(1);
         windEl.text(`Wind: ${windSpeed} MPH`)
-
-        //
     };
 
     // Converts temperture in Kelvin to Fahrenheit
@@ -85,7 +84,7 @@ $(document).ready(function() {
                 const uvIndexClass = getUVindexColor(uvIndex);
                 uvIndexSpan.text(uvIndex).attr('class', `tag ${uvIndexClass}`);
             });
-    }
+    };
 
     // Uses the uv index to select the correct class to make the background color correspond to the the scale from the WHO (https://www.epa.gov/sunsafety/uv-index-scale-0)
     function getUVindexColor(uvIndex) {
@@ -108,7 +107,6 @@ $(document).ready(function() {
 
     // Stores city history info in local storage
     function saveCity(name, zipcode, countrycode, latitude, longitude) {
-        console.log(`Country is: ${countrycode}.`)
         const newObj = { Name: name, Zip: zipcode, Country: countrycode, Latitude: latitude, Longitude: longitude };
 
         // If the name in the first history object is blank, set the historyData to the new object; otherwise, ad the new object to the array
@@ -147,11 +145,10 @@ $(document).ready(function() {
                 array.splice(index, 1);
             }
         })
-    }
+    };
 
     // Takes the response from calling the OpenWeather API and uses it to display current weather, get and diplay the UV index, save the new city in local storage and add a search button for the city
     function useWeatherData(response, zipcode, countrycode) {
-        console.log(`UseWeather cc: ${countrycode}`)
         const cityName = response.name;
         const latitude = response.coord.lat;
         const longitude = response.coord.lon;
@@ -159,7 +156,7 @@ $(document).ready(function() {
         getUVIndex(latitude, longitude);
         // To save data to local storage
         saveCity(cityName, zipcode, countrycode, latitude, longitude);
-    }
+    };
 
     // Uses data from the API forecast call to clone the forecast tile
     function getForecast(forecastAPIcall) {
@@ -202,7 +199,7 @@ $(document).ready(function() {
                         getForecast(forecastResponse);
                     });
             });
-    }
+    };
 
     // On page load, get history data and store it in the variable historyData, then display info for last search and add search buttons for previous searches
     getHistory();
@@ -222,7 +219,6 @@ $(document).ready(function() {
         event.preventDefault();
         const zipcode = zipInputEl.val();
         const countrycode = countryInputEl.val();
-        console.log(countrycode);
         //Use the zipcode to make the API call and send the response and zip code to the useWeatherData func
         getCurrentAndForecast(zipcode, countrycode);
         // Clear input field
