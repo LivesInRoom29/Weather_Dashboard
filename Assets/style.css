@@ -125,26 +125,50 @@ img#forecast-icon {
     h2.subtitle.city-date {
         margin-bottom: 25px;
     }
+
     div.tile.current-heading {
-        /* max-height: 100px; */
         display: block;
     }
+
     h3.subtitle.is-5 {
         padding-left: 15px;
     }
+
     div.tile.current-details {
         margin-top: 45px;
     }
 
-    /* For the forecast section */
+    /* For the forecast section, so each of the 5 tiles is centered and takes up the whole width */
     div.tile.is-parent.forecast-block {
         margin: auto;
         max-width: 100%;
     }
+
+    /* Adjusts each of the 5 forecast tiles so that the date and icon stay on the left while the temp and humidity move to the right */
+    div.tile.forecast {
+        display: flex;
+    }
+
+    div.tile.forecast-left {
+        margin-top: 10px;
+        margin-left: 10px;
+    }
+
+    div.forecast-text {
+        margin-right: 10px;
+    }
 }
 
 @media only screen and (max-width:768px) and (min-width: 481px) {
+    /* Adjusts weather forecast so that the tiles remain horizontal and adds a border to the date and icon */
     div.tile.forecast-container {
         display: flex;
     }
+    div.tile.forecast-left {
+        margin-left: 5px;
+    }
+}
+
+@media only screen and (max-width:480px) {
+
 }

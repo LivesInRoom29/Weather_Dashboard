@@ -20,6 +20,7 @@
         <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
         <!-- Custom styles -->
         <link rel="stylesheet" href="Assets/style.css">
+
     </head>
     <body>
         <div class="container">
@@ -83,10 +84,12 @@
                             <!-- Template contains the elements to be cloned -->
                             <div id="template-forecast-block" class="hiddenTemplate">
                                 <div class="tile is-parent forecast-block">
-                                    <div class="tile is-vertical forecast">
-                                        <h4 class="subtitle is-6 has-text-weight-medium has-text-white date">Tomorrow's Date</h4>
-                                        <div class="icon" role="icon">
-                                            <img id="forecast-icon" class="is-size-2" src="" alt="">
+                                    <div class="tile forecast">
+                                        <div class="tile is-vertical forecast-left">
+                                            <h4 class="subtitle is-6 has-text-weight-medium has-text-white date">Tomorrow's Date</h4>
+                                            <div class="icon" role="icon">
+                                                <img id="forecast-icon" class="is-size-2" src="" alt="">
+                                            </div>
                                         </div>
                                         <div class="forecast-text">
                                             <p class="forecast-temp">Temp: 78.5 &#8457;</p>
@@ -116,6 +119,17 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
         <!-- Moment.js -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+        <!-- To check for resize and adjust styling of the forecast for mobile screens -->
+        <script type="text/javascript">
+            $(window).resize(function(){
+
+                if ($(window).width() < 481) {
+                    $('div.forecast').removeClass('is-vertical');
+                } else {
+                    $('div.forecast').addClass('is-vertical');
+                }
+            });
+        </script>
         <!-- Country Codes JSON object -->
         <script type="text/javascript" src="./Assets/countryCodes.js"></script>
         <!-- Main script -->
