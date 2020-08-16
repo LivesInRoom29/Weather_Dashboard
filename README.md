@@ -1,4 +1,7 @@
 # Weather Dashboard
+[![License: Unlicense](https://img.shields.io/badge/license-Unlicense-blue.svg)](http://unlicense.org/)
+
+
 HW 6 for the UNH Coding Bootcamp. This weather app will allow the user obtain weather information for any city. It will retrieve data from the OpenWeather API, and display the current weather conditions and a five day forecast on the page.
 
 [Link to Deployed App](https://livesinroom29.github.io/Weather_Dashboard/)
@@ -85,3 +88,6 @@ There are a number of features I would like to implement in the future to improv
 * To remove an object from an array if it contains a certain value, I adapted code from the third answer on [Stack OverFlow](https://stackoverflow.com/questions/21659888/javascript-find-and-remove-object-in-array-based-on-key-value)
 * Thanks to the UNH Bootcamp instructor, TAs, and tutors for giving us great instruction, resources, and support.
 
+## License
+
+Unlicense
